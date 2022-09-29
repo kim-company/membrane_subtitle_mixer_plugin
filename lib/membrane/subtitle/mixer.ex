@@ -38,11 +38,6 @@ defmodule Membrane.Subtitle.Mixer do
   end
 
   @impl true
-  def handle_prepared_to_playing(_ctx, state) do
-    {{:ok, demand: :input}, state}
-  end
-
-  @impl true
   def handle_demand(_pad, size, :buffers, _ctx, state) do
     {{:ok, demand: {:video, size}, demand: {:subtitle, size}}, state}
   end
@@ -77,7 +72,7 @@ defmodule Membrane.Subtitle.Mixer do
     case Membrane.FLV.Parser.parse_body(state.partial <> payload) do
       {:ok, frames, rest} ->
         {actions, state} = prepare_to_send(frames, state)
-        actions = Enum.concat(actions, demand: :input)
+        actions = Enum.concat(actions, demand: :video)
         {{:ok, actions}, %{state | partial: rest}}
 
       {:error, :not_enough_data} ->
