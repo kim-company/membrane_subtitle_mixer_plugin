@@ -6,6 +6,8 @@ defmodule Membrane.Subtitle.Mixer do
   alias Membrane.Buffer
   alias Subtitle.Cue
 
+  require Logger
+
   @flv_footer_size 4
 
   def_input_pad(:video,
@@ -52,6 +54,11 @@ defmodule Membrane.Subtitle.Mixer do
   end
 
   @impl true
+  def handle_prepared_to_playing(_ctx, state) do
+    {{:ok, demand: :video, demand: :subtitle}, state}
+  end
+
+  @impl true
   def handle_process(:video, %Buffer{payload: payload}, _ctx, %{header_present?: true} = state) do
     case Membrane.FLV.Parser.parse_header(state.partial <> payload) do
       {:ok, header, rest} ->
@@ -80,8 +87,14 @@ defmodule Membrane.Subtitle.Mixer do
     end
   end
 
-  def handle_process(:subtitle, %Membrane.Buffer{payload: cue}, _ctx, %{subtitles: queue} = state) do
-    {:ok, %{state | subtitles: queue ++ [cue]}}
+  def handle_process(
+        :subtitle,
+        %Membrane.Buffer{payload: text, metadata: %{from: from, to: to}},
+        _ctx,
+        %{subtitles: queue} = state
+      ) do
+    {{:ok, demand: :subtitle},
+     %{state | subtitles: queue ++ [%Cue{from: from, to: to, text: text}]}}
   end
 
   @impl true
@@ -130,15 +143,40 @@ defmodule Membrane.Subtitle.Mixer do
          %{subtitles: [%Cue{from: from, to: to, text: text} | tail]} = state
        )
        when from <= pts and pts <= to do
+    Logger.info(
+      "Mixing TAG with text: #{inspect(text)}, from: #{inspect(from)}, pts: #{inspect(pts)}"
+    )
+
     {sub(tag, prev_tag_size, text), %{state | subtitles: tail, clear_timestamp: to}}
   end
 
   defp maybe_sub(tag, prev_tag_size, pts, %{clear_timestamp: cts} = state)
        when cts > 0 and cts <= pts do
+    Logger.info("Clearing TAG: cts: #{inspect(cts)}, pts: #{inspect(pts)}")
     {sub(tag, prev_tag_size, nil), %{state | clear_timestamp: 0}}
   end
 
-  defp maybe_sub(_tag, _prev_tag_size, _pts, _subtitles), do: :noop
+  defp maybe_sub(
+         tag,
+         prev_tag_size,
+         pts,
+         %{subtitles: [%Cue{to: to, text: text} | tail]} = state
+       )
+       when to < pts do
+    Logger.info(
+      "Skipping cue with text: #{inspect(text)}, to: #{inspect(to)}, pts: #{inspect(pts)}: too old"
+    )
+
+    maybe_sub(tag, prev_tag_size, pts, %{state | subtitles: tail})
+  end
+
+  defp maybe_sub(_tag, _prev_tag_size, pts, %{subtitles: subtitles}) do
+    Logger.info(
+      "Nothing to do apparently: pts: #{inspect(pts)}, next: #{inspect(List.first(subtitles))}"
+    )
+
+    :noop
+  end
 
   defp sub(tag, previous_tag_size, text) do
     tag = if is_nil(text), do: FLV.Tag.clear_caption(tag), else: FLV.Tag.add_caption(tag, text)
