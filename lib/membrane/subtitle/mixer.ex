@@ -10,6 +10,8 @@ defmodule Membrane.Subtitle.Mixer do
 
   @flv_footer_size 4
 
+  # TODO: this is an FLV (hence AV) input, not just video.
+
   def_input_pad(:video,
     availability: :always,
     demand_unit: :buffers,
@@ -116,6 +118,7 @@ defmodule Membrane.Subtitle.Mixer do
         dts = Membrane.Time.milliseconds(packet.dts)
 
         # TODO: Maybe we should not call the sub function on packets which are not NALU(?)
+        # TODO: sub video tags only.
         {tag, state} =
           case maybe_sub(tag, state.previous_tag_size, pts, state) do
             {{tag, tag_size}, state} ->
