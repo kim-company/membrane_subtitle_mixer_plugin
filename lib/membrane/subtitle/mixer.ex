@@ -117,11 +117,12 @@ defmodule Membrane.Subtitle.Mixer do
         pts = Membrane.Time.milliseconds(packet.pts)
         dts = Membrane.Time.milliseconds(packet.dts)
 
-        # TODO: Maybe we should not call the sub function on packets which are not NALU(?)
-        # TODO: sub video tags only.
+        # Note: We are doing the muxing with the DTS instead of the PTS Tags.
+        # We still have to investigate where they get lost.
+
         {tag, state} =
           if packet.type == :video do
-            case maybe_sub(tag, state.previous_tag_size, pts, state) do
+            case maybe_sub(tag, state.previous_tag_size, dts, state) do
               {{tag, tag_size}, state} ->
                 {tag, %{state | previous_tag_size: tag_size}}
 
