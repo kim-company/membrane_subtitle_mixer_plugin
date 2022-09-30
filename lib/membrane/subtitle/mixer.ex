@@ -120,12 +120,16 @@ defmodule Membrane.Subtitle.Mixer do
         # TODO: Maybe we should not call the sub function on packets which are not NALU(?)
         # TODO: sub video tags only.
         {tag, state} =
-          case maybe_sub(tag, state.previous_tag_size, pts, state) do
-            {{tag, tag_size}, state} ->
-              {tag, %{state | previous_tag_size: tag_size}}
+          if packet.type == :video do
+            case maybe_sub(tag, state.previous_tag_size, pts, state) do
+              {{tag, tag_size}, state} ->
+                {tag, %{state | previous_tag_size: tag_size}}
 
-            :noop ->
-              {tag, %{state | previous_tag_size: tag_size}}
+              {:noop, state} ->
+                {tag, %{state | previous_tag_size: tag_size}}
+            end
+          else
+            {tag, %{state | previous_tag_size: tag_size}}
           end
 
         {[%Buffer{pts: pts, dts: dts, payload: tag} | buffers], state}
@@ -173,13 +177,7 @@ defmodule Membrane.Subtitle.Mixer do
     maybe_sub(tag, prev_tag_size, pts, %{state | subtitles: tail})
   end
 
-  defp maybe_sub(_tag, _prev_tag_size, pts, %{subtitles: subtitles}) do
-    Logger.info(
-      "Nothing to do apparently: pts: #{inspect(pts)}, next: #{inspect(List.first(subtitles))}"
-    )
-
-    :noop
-  end
+  defp maybe_sub(_tag, _prev_tag_size, _pts, state), do: {:noop, state}
 
   defp sub(tag, previous_tag_size, text) do
     tag = if is_nil(text), do: FLV.Tag.clear_caption(tag), else: FLV.Tag.add_caption(tag, text)
