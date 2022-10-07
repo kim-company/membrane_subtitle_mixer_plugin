@@ -30,13 +30,7 @@ defmodule Membrane.Subtitle.MixerBin do
         payloader: Membrane.MP4.Payloader.H264,
         flv_muxer: Membrane.FLV.Muxer,
         mixer: Membrane.Subtitle.Mixer,
-        flv_demuxer: Membrane.FLV.Demuxer,
-        out_parser: %Membrane.H264.FFmpeg.Parser{
-          framerate: nil,
-          alignment: :au,
-          attach_nalus?: true,
-          skip_until_keyframe?: true
-        }
+        flv_demuxer: Membrane.FLV.Demuxer
       ],
       links: [
         link_bin_input(:video)
@@ -49,10 +43,9 @@ defmodule Membrane.Subtitle.MixerBin do
         |> to(:mixer),
         link(:flv_muxer)
         |> via_in(:video)
-        |> link(:mixer)
+        |> to(:mixer)
         |> to(:flv_demuxer)
         |> via_out(Pad.ref(:video, 0))
-        |> to(:out_parser)
         |> to_bin_output()
       ]
     }
