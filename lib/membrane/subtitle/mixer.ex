@@ -114,11 +114,10 @@ defmodule Membrane.Subtitle.Mixer do
       Enum.reduce(packets, {[], state}, fn packet, {buffers, state} ->
         {tag, tag_size} = Membrane.FLV.Serializer.serialize(packet, state.previous_tag_size)
 
-        pts = Membrane.Time.milliseconds(packet.pts)
-        # dts = Membrane.Time.milliseconds(packet.dts)
-
         {tag, state} =
           if packet.type == :video do
+            pts = Membrane.Time.milliseconds(packet.pts)
+
             case maybe_sub(tag, state.previous_tag_size, pts, state) do
               {{tag, tag_size}, state} ->
                 {tag, %{state | previous_tag_size: tag_size}}
