@@ -115,14 +115,11 @@ defmodule Membrane.Subtitle.Mixer do
         {tag, tag_size} = Membrane.FLV.Serializer.serialize(packet, state.previous_tag_size)
 
         pts = Membrane.Time.milliseconds(packet.pts)
-        dts = Membrane.Time.milliseconds(packet.dts)
-
-        # Note: We are doing the muxing with the DTS instead of the PTS Tags.
-        # We still have to investigate where they get lost.
+        # dts = Membrane.Time.milliseconds(packet.dts)
 
         {tag, state} =
           if packet.type == :video do
-            case maybe_sub(tag, state.previous_tag_size, dts, state) do
+            case maybe_sub(tag, state.previous_tag_size, pts, state) do
               {{tag, tag_size}, state} ->
                 {tag, %{state | previous_tag_size: tag_size}}
 
@@ -133,7 +130,7 @@ defmodule Membrane.Subtitle.Mixer do
             {tag, %{state | previous_tag_size: tag_size}}
           end
 
-        {[%Buffer{pts: pts, dts: dts, payload: tag} | buffers], state}
+        {[%Buffer{payload: tag} | buffers], state}
       end)
 
     {[buffer: {:output, Enum.reverse(buffers)}], state}
