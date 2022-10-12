@@ -25,7 +25,10 @@ UNIFEX_TERM add_caption(UnifexEnv *env, UnifexPayload *flv, char *text)
     memcpy(payload.data, flvtag_raw_data(&tag), size);
 
     flvtag_free(&tag);
-    return add_caption_result_ok(env, &payload);
+
+    UNIFEX_TERM result = add_caption_result_ok(env, &payload);
+    unifex_payload_release(&payload);
+    return result;
 }
 
 UNIFEX_TERM clear_caption(UnifexEnv *env, UnifexPayload *flv)

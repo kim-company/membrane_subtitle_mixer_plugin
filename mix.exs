@@ -28,7 +28,8 @@ defmodule Membrane.Subtitle.MixProject do
       {:membrane_h264_ffmpeg_plugin, "~> 0.21.5"},
       {:membrane_flv_plugin, "~> 0.3.0"},
       {:membrane_mp4_plugin, "~> 0.16.0"},
-      {:membrane_file_plugin, "~> 0.12.0"}
+      {:membrane_file_plugin, "~> 0.12.0"},
+      {:benchee, "~> 1.1.0", only: :test}
     ]
   end
 end
