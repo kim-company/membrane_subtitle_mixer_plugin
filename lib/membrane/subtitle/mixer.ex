@@ -147,7 +147,7 @@ defmodule Membrane.Subtitle.Mixer do
          %{subtitles: [%Cue{from: from, to: to, text: text} | tail]} = state
        )
        when from <= pts and pts <= to do
-    Logger.info(
+    Logger.debug(
       "Mixing TAG with text: #{inspect(text)}, from: #{inspect(from)}, pts: #{inspect(pts)}"
     )
 
@@ -156,7 +156,7 @@ defmodule Membrane.Subtitle.Mixer do
 
   defp maybe_sub(tag, prev_tag_size, pts, %{clear_timestamp: cts} = state)
        when cts > 0 and cts <= pts do
-    Logger.info("Clearing TAG: cts: #{inspect(cts)}, pts: #{inspect(pts)}")
+    Logger.debug("Clearing TAG: cts: #{inspect(cts)}, pts: #{inspect(pts)}")
     {sub(tag, prev_tag_size, nil), %{state | clear_timestamp: 0}}
   end
 
