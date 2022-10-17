@@ -1,9 +1,9 @@
-defmodule Membrane.Subtitle.UnmarshalerTest do
+defmodule Membrane.SubtitleMixer.UnmarshalerTest do
   use ExUnit.Case
   import Membrane.Testing.Assertions
 
   alias Membrane.Testing
-  alias Membrane.Subtitle
+  alias Membrane.SubtitleMixer
 
   test "sends one buffer for each cue found in input" do
     vtt = """
@@ -19,7 +19,7 @@ defmodule Membrane.Subtitle.UnmarshalerTest do
 
     children = [
       source: %Testing.Source{output: [vtt]},
-      unmarshaler: Subtitle.Unmarshaler,
+      unmarshaler: SubtitleMixer.Unmarshaler,
       sink: Testing.Sink
     ]
 

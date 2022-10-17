@@ -1,10 +1,11 @@
-defmodule Membrane.Subtitle.Mixer do
+defmodule Membrane.SubtitleMixer.FLV.Mixer do
   use Membrane.Filter
 
   require Membrane.Logger
 
   alias Membrane.Buffer
   alias Subtitle.Cue
+  alias SubtitleMixer.FLV
 
   require Logger
 

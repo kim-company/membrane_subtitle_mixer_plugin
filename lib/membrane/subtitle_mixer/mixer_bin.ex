@@ -1,4 +1,4 @@
-defmodule Membrane.Subtitle.MixerBin do
+defmodule Membrane.SubtitleMixer.MixerBin do
   use Membrane.Bin
 
   def_input_pad(:video,
@@ -29,7 +29,7 @@ defmodule Membrane.Subtitle.MixerBin do
         },
         payloader: Membrane.MP4.Payloader.H264,
         flv_muxer: Membrane.FLV.Muxer,
-        mixer: Membrane.Subtitle.Mixer,
+        mixer: Membrane.SubtitleMixer.FLV.Mixer,
         flv_demuxer: Membrane.FLV.Demuxer
       ],
       links: [

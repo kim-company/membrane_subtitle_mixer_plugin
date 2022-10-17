@@ -1,4 +1,4 @@
-defmodule Membrane.Subtitle.Unmarshaler do
+defmodule Membrane.SubtitleMixer.Unmarshaler do
   use Membrane.Filter
 
   alias Subtitle.WebVTT

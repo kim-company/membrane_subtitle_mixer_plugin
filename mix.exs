@@ -1,12 +1,11 @@
-defmodule Membrane.Subtitle.MixProject do
+defmodule Membrane.SubtitleMixer.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :membrane_subtitle_plugin,
+      app: :membrane_subtitle_mixer_plugin,
       version: "0.1.0",
       elixir: "~> 1.14",
-      compilers: [:unifex, :bundlex] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       deps: deps()
     ]
@@ -23,13 +22,11 @@ defmodule Membrane.Subtitle.MixProject do
   defp deps do
     [
       {:membrane_core, "~> 0.10.2"},
-      {:membrane_common_c, "~> 0.13.0"},
-      {:unifex, "~> 1.0"},
       {:membrane_h264_ffmpeg_plugin, "~> 0.21.5"},
       {:membrane_flv_plugin, "~> 0.3.0"},
       {:membrane_mp4_plugin, "~> 0.16.0"},
       {:membrane_file_plugin, "~> 0.12.0"},
-      {:benchee, "~> 1.1.0", only: :test}
+      {:subtitle_mixer, github: "kim-company/subtitle_mixer"}
     ]
   end
 end
