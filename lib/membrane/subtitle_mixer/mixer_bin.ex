@@ -1,22 +1,19 @@
 defmodule Membrane.SubtitleMixer.MixerBin do
   use Membrane.Bin
 
-  def_input_pad(:video,
+  def_input_pad :video,
     availability: :always,
     demand_unit: :buffers,
     caps: :any
-  )
 
-  def_input_pad(:subtitle,
+  def_input_pad :subtitle,
     availability: :always,
     demand_unit: :buffers,
     caps: :any
-  )
 
-  def_output_pad(:output,
+  def_output_pad :output,
     demand_mode: :auto,
     caps: :any
-  )
 
   @impl true
   def handle_init(_opts) do
