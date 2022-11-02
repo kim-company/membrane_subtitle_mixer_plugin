@@ -11,24 +11,19 @@ defmodule Membrane.SubtitleMixer.FLV.Mixer do
 
   @flv_footer_size 4
 
-  # TODO: this is an FLV (hence AV) input, not just video.
-
-  def_input_pad(:video,
+  def_input_pad :video,
     availability: :always,
     demand_unit: :buffers,
     caps: :any
-  )
 
-  def_input_pad(:subtitle,
+  def_input_pad :subtitle,
     availability: :always,
     demand_unit: :buffers,
     caps: :any
-  )
 
-  def_output_pad(:output,
+  def_output_pad :output,
     demand_mode: :auto,
     caps: :any
-  )
 
   @impl true
   def handle_init(_opts) do
