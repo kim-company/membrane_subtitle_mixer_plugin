@@ -3,8 +3,17 @@ defmodule Membrane.SubtitleMixer.Unmarshaler do
 
   alias Subtitle.WebVTT
 
-  def_input_pad(:input, demand_mode: :auto, demand_unit: :buffers, mode: :pull, caps: :any)
-  def_output_pad(:output, demand_mode: :auto, demand_unit: :buffers, mode: :pull, caps: :any)
+  def_input_pad :input,
+    demand_mode: :auto,
+    demand_unit: :buffers,
+    mode: :pull,
+    caps: :any
+
+  def_output_pad :output,
+    demand_mode: :auto,
+    demand_unit: :buffers,
+    mode: :pull,
+    caps: :any
 
   def handle_init(_opts) do
     {:ok, %{}}
