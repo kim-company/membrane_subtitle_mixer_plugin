@@ -147,7 +147,7 @@ defmodule Membrane.SubtitleMixer.FLV.Mixer do
        )
        when to < pts do
     Membrane.Logger.debug("pts: #{pts}; [-] #{text}")
-    maybe_sub(tag, prev_tag_size, pts, %{state | subtitles: tail})
+    {sub(tag, prev_tag_size, nil), %{state | subtitles: tail}}
   end
 
   defp maybe_sub(tag, prev_tag_size, pts, state) do
