@@ -26,7 +26,7 @@ defmodule Membrane.SubtitleMixer.MixProject do
       {:membrane_flv_plugin, "~> 0.3.0"},
       {:membrane_mp4_plugin, "~> 0.16.0"},
       {:membrane_file_plugin, "~> 0.12.0"},
-      {:subtitle_mixer, github: "kim-company/subtitle_mixer", branch: "fix/32chars"}
+      {:subtitle_mixer, github: "kim-company/subtitle_mixer"}
     ]
   end
 end
