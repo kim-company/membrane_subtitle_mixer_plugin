@@ -7,8 +7,6 @@ defmodule Membrane.SubtitleMixer.FLV.Mixer do
   alias Subtitle.Cue
   alias SubtitleMixer.FLV
 
-  require Logger
-
   @flv_footer_size 4
 
   def_input_pad :video,
@@ -137,6 +135,7 @@ defmodule Membrane.SubtitleMixer.FLV.Mixer do
          %{subtitles: [%Cue{from: from, to: to, text: text} | _]} = state
        )
        when from <= pts and pts <= to do
+    Membrane.Logger.debug("pts: #{pts}; [+] #{text}")
     {sub(tag, prev_tag_size, text), state}
   end
 
@@ -144,13 +143,15 @@ defmodule Membrane.SubtitleMixer.FLV.Mixer do
          tag,
          prev_tag_size,
          pts,
-         %{subtitles: [%Cue{to: to} | tail]} = state
+         %{subtitles: [%Cue{to: to, text: text} | tail]} = state
        )
        when to < pts do
+    Membrane.Logger.debug("pts: #{pts}; [-] #{text}")
     maybe_sub(tag, prev_tag_size, pts, %{state | subtitles: tail})
   end
 
-  defp maybe_sub(tag, prev_tag_size, _pts, state) do
+  defp maybe_sub(tag, prev_tag_size, pts, state) do
+    Membrane.Logger.debug("pts: #{pts}; [x]")
     {sub(tag, prev_tag_size, nil), state}
   end
 
