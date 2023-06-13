@@ -24,7 +24,7 @@ defmodule Membrane.SubtitleMixer.MixProject do
       {:membrane_core, ">= 0.11.0"},
       {:membrane_h264_ffmpeg_plugin, ">= 0.0.0"},
       {:membrane_flv_plugin, ">= 0.6.0"},
-      {:membrane_mp4_plugin, ">= 0.22.0"},
+      {:membrane_mp4_plugin, ">= 0.19.0"},
       {:membrane_file_plugin, ">= 0.0.0"},
       {:subtitle_mixer, github: "kim-company/subtitle_mixer"}
     ]
