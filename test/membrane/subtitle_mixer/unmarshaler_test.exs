@@ -1,5 +1,6 @@
 defmodule Membrane.SubtitleMixer.UnmarshalerTest do
   use ExUnit.Case
+  use Membrane.Pipeline
   import Membrane.Testing.Assertions
 
   alias Membrane.Testing
@@ -17,17 +18,13 @@ defmodule Membrane.SubtitleMixer.UnmarshalerTest do
     - You could die.
     """
 
-    children = [
-      source: %Testing.Source{output: [vtt]},
-      unmarshaler: SubtitleMixer.Unmarshaler,
-      sink: Testing.Sink
+    links = [
+      child(:source, %Testing.Source{output: [vtt]})
+      |> child(:unmarshaler, SubtitleMixer.Unmarshaler)
+      |> child(:sink, Testing.Sink)
     ]
 
-    options = [
-      links: Membrane.ParentSpec.link_linear(children)
-    ]
-
-    {:ok, pid} = Membrane.Testing.Pipeline.start_link(options)
+    pid = Membrane.Testing.Pipeline.start_link_supervised!(structure: links)
 
     assert_sink_buffer(pid, :sink, %Membrane.Buffer{
       payload: ~s/- Never drink liquid nitrogen./,

@@ -6,6 +6,7 @@ defmodule Membrane.SubtitleMixer.FLV.Mixer do
   alias Membrane.Buffer
   alias Subtitle.Cue
   alias SubtitleMixer.FLV
+  alias Membrane.RemoteStream
 
   require Logger
 
@@ -14,20 +15,20 @@ defmodule Membrane.SubtitleMixer.FLV.Mixer do
   def_input_pad :video,
     availability: :always,
     demand_unit: :buffers,
-    caps: :any
+    accepted_format: %Membrane.RemoteStream{content_format: Membrane.FLV}
 
   def_input_pad :subtitle,
     availability: :always,
     demand_unit: :buffers,
-    caps: :any
+    accepted_format: %RemoteStream{}
 
   def_output_pad :output,
     demand_mode: :auto,
-    caps: :any
+    accepted_format: %Membrane.RemoteStream{content_format: Membrane.FLV}
 
   @impl true
-  def handle_init(_opts) do
-    {:ok,
+  def handle_init(_ctx, _opts) do
+    {[],
      %{
        header_present?: true,
        previous_tag_size: 0,
@@ -39,21 +40,21 @@ defmodule Membrane.SubtitleMixer.FLV.Mixer do
 
   @impl true
   def handle_demand(_pad, size, :buffers, _ctx, state) do
-    {{:ok, demand: {:video, size}, demand: {:subtitle, size}}, state}
+    {[demand: {:video, size}, demand: {:subtitle, size}], state}
   end
 
   @impl true
-  def handle_caps(:video, caps, _ctx, state) do
-    {{:ok, [caps: {:output, caps}]}, state}
+  def handle_stream_format(:video, caps, _ctx, state) do
+    {[stream_format: {:output, caps}], state}
   end
 
-  def handle_caps(:subtitle, _caps, _ctx, state) do
+  def handle_stream_format(:subtitle, _caps, _ctx, state) do
     {:ok, state}
   end
 
   @impl true
-  def handle_prepared_to_playing(_ctx, state) do
-    {{:ok, demand: :video, demand: :subtitle}, state}
+  def handle_playing(_ctx, state) do
+    {[demand: :video, demand: :subtitle], state}
   end
 
   @impl true
@@ -62,10 +63,10 @@ defmodule Membrane.SubtitleMixer.FLV.Mixer do
       {:ok, header, rest} ->
         {actions, state} = prepare_to_send(header, state)
         actions = Enum.concat(actions, demand: :video)
-        {{:ok, actions}, %{state | partial: rest, header_present?: false}}
+        {actions, %{state | partial: rest, header_present?: false}}
 
       {:error, :not_enough_data} ->
-        {{:ok, demand: :video}, %{state | partial: state.partial <> payload}}
+        {[demand: :video], %{state | partial: state.partial <> payload}}
 
       {:error, :not_a_header} ->
         raise "Invalid data detected on the input. Expected Membrane.FLV header"
@@ -78,10 +79,10 @@ defmodule Membrane.SubtitleMixer.FLV.Mixer do
       {:ok, frames, rest} ->
         {actions, state} = prepare_to_send(frames, state)
         actions = Enum.concat(actions, demand: :video)
-        {{:ok, actions}, %{state | partial: rest}}
+        {actions, %{state | partial: rest}}
 
       {:error, :not_enough_data} ->
-        {{:ok, demand: :video}, %{state | partial: state.partial <> payload}}
+        {[demand: :video], %{state | partial: state.partial <> payload}}
     end
   end
 
@@ -91,18 +92,17 @@ defmodule Membrane.SubtitleMixer.FLV.Mixer do
         _ctx,
         %{subtitles: queue} = state
       ) do
-    {{:ok, demand: :subtitle},
-     %{state | subtitles: queue ++ [%Cue{from: from, to: to, text: text}]}}
+    {[demand: :subtitle], %{state | subtitles: queue ++ [%Cue{from: from, to: to, text: text}]}}
   end
 
   @impl true
   def handle_end_of_stream(:video, _context, state) do
     last = <<state.previous_tag_size::32>>
-    {{:ok, buffer: {:output, %Buffer{payload: last}}, end_of_stream: :output}, state}
+    {[buffer: {:output, %Buffer{payload: last}}, end_of_stream: :output], state}
   end
 
   def handle_end_of_stream(:subtitle, _context, state) do
-    {:ok, state}
+    {[], state}
   end
 
   defp prepare_to_send(packets, state) when is_list(packets) do

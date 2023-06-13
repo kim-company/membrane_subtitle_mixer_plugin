@@ -7,18 +7,19 @@ defmodule Membrane.SubtitleMixer.Unmarshaler do
     demand_mode: :auto,
     demand_unit: :buffers,
     mode: :pull,
-    caps: :any
+    accepted_format: Membrane.RemoteStream
 
   def_output_pad :output,
     demand_mode: :auto,
-    demand_unit: :buffers,
     mode: :pull,
-    caps: :any
+    accepted_format: Membrane.RemoteStream
 
-  def handle_init(_opts) do
-    {:ok, %{}}
+  @impl true
+  def handle_init(_ctx, _opts) do
+    {[], %{}}
   end
 
+  @impl true
   def handle_process(:input, buffer, _ctx, state) do
     {:ok, %WebVTT{cues: cues}} = WebVTT.unmarshal(buffer.payload)
 
@@ -39,6 +40,6 @@ defmodule Membrane.SubtitleMixer.Unmarshaler do
       end)
       |> Enum.map(fn buffer -> {:buffer, {:output, buffer}} end)
 
-    {{:ok, actions}, state}
+    {actions, state}
   end
 end

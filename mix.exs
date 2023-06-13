@@ -21,11 +21,11 @@ defmodule Membrane.SubtitleMixer.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:membrane_core, "~> 0.10.2"},
-      {:membrane_h264_ffmpeg_plugin, "~> 0.21.5"},
-      {:membrane_flv_plugin, "~> 0.3.0"},
-      {:membrane_mp4_plugin, "~> 0.16.0"},
-      {:membrane_file_plugin, "~> 0.12.0"},
+      {:membrane_core, ">= 0.11.0"},
+      {:membrane_h264_ffmpeg_plugin, ">= 0.0.0"},
+      {:membrane_flv_plugin, ">= 0.6.0"},
+      {:membrane_mp4_plugin, ">= 0.22.0"},
+      {:membrane_file_plugin, ">= 0.0.0"},
       {:subtitle_mixer, github: "kim-company/subtitle_mixer"}
     ]
   end
