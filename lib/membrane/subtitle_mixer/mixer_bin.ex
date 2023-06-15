@@ -4,8 +4,8 @@ defmodule Membrane.SubtitleMixer.MixerBin do
   def_input_pad(:video,
     availability: :always,
     demand_unit: :buffers,
-    # Here the format is actually what the H264.Payloader accepts
-    accepted_format: Membrane.RemoteStream
+    accepted_format:
+      %format{} when format in [Membrane.RemoteStream, Membrane.H264, H264.RemoteStream]
   )
 
   def_input_pad(:subtitle,
