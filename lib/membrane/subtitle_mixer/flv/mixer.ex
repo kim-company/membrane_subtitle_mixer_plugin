@@ -49,7 +49,7 @@ defmodule Membrane.SubtitleMixer.FLV.Mixer do
   end
 
   def handle_stream_format(:subtitle, _caps, _ctx, state) do
-    {:ok, state}
+    {[], state}
   end
 
   @impl true
