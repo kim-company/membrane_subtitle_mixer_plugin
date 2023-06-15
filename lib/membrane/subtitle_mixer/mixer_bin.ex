@@ -1,20 +1,23 @@
 defmodule Membrane.SubtitleMixer.MixerBin do
   use Membrane.Bin
 
-  def_input_pad :video,
+  def_input_pad(:video,
     availability: :always,
     demand_unit: :buffers,
     # Here the format is actually what the H264.Payloader accepts
     accepted_format: Membrane.RemoteStream
+  )
 
-  def_input_pad :subtitle,
+  def_input_pad(:subtitle,
     availability: :always,
     demand_unit: :buffers,
     accepted_format: Membrane.RemoteStream
+  )
 
-  def_output_pad :output,
+  def_output_pad(:output,
     demand_mode: :auto,
     accepted_format: Membrane.H264.RemoteStream
+  )
 
   @impl true
   def handle_init(_ctx, _opts) do
@@ -34,7 +37,7 @@ defmodule Membrane.SubtitleMixer.MixerBin do
       get_child(:flv_muxer)
       |> via_in(:video)
       |> get_child(:mixer)
-      |> get_child(:flv_demuxer)
+      |> child(:flv_demuxer, Membrane.FLV.Demuxer)
       |> via_out(Pad.ref(:video, 0))
       |> bin_output()
     ]
