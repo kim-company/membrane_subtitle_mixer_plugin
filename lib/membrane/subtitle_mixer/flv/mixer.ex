@@ -86,13 +86,14 @@ defmodule Membrane.SubtitleMixer.FLV.Mixer do
     end
   end
 
-  def handle_process(
-        :subtitle,
-        %Membrane.Buffer{payload: text, metadata: %{from: from, to: to}},
-        _ctx,
-        %{subtitles: queue} = state
-      ) do
-    {[demand: :subtitle], %{state | subtitles: queue ++ [%Cue{from: from, to: to, text: text}]}}
+  def handle_process(:subtitle, buffer, _ctx, state) do
+    cue = %Cue{
+      from: buffer.pts,
+      to: buffer.pts + buffer.metadata.duration,
+      text: buffer.payload
+    }
+
+    {[demand: :subtitle], %{state | subtitles: state.subtitles ++ [cue]}}
   end
 
   @impl true
