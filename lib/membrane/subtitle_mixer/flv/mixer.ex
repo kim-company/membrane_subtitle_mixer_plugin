@@ -8,23 +8,26 @@ defmodule Membrane.SubtitleMixer.FLV.Mixer do
   alias SubtitleMixer.FLV
   alias Membrane.RemoteStream
 
-  require Logger
+  require Membrane.Logger
 
   @flv_footer_size 4
 
-  def_input_pad :video,
+  def_input_pad(:video,
     availability: :always,
     demand_unit: :buffers,
     accepted_format: %Membrane.RemoteStream{content_format: Membrane.FLV}
+  )
 
-  def_input_pad :subtitle,
+  def_input_pad(:subtitle,
     availability: :always,
     demand_unit: :buffers,
     accepted_format: %RemoteStream{}
+  )
 
-  def_output_pad :output,
+  def_output_pad(:output,
     demand_mode: :auto,
     accepted_format: %Membrane.RemoteStream{content_format: Membrane.FLV}
+  )
 
   @impl true
   def handle_init(_ctx, _opts) do
@@ -144,7 +147,7 @@ defmodule Membrane.SubtitleMixer.FLV.Mixer do
          %{subtitles: [%Cue{from: from, to: to, text: text} | tail]} = state
        )
        when from <= pts and pts <= to do
-    Logger.debug(
+    Membrane.Logger.info(
       "Mixing TAG with text: #{inspect(text)}, from: #{inspect(from)}, pts: #{inspect(pts)}"
     )
 
@@ -153,7 +156,7 @@ defmodule Membrane.SubtitleMixer.FLV.Mixer do
 
   defp maybe_sub(tag, prev_tag_size, pts, %{clear_timestamp: cts} = state)
        when cts > 0 and cts <= pts do
-    Logger.debug("Clearing TAG: cts: #{inspect(cts)}, pts: #{inspect(pts)}")
+    Membrane.Logger.info("Clearing TAG: cts: #{inspect(cts)}, pts: #{inspect(pts)}")
     {sub(tag, prev_tag_size, nil), %{state | clear_timestamp: 0}}
   end
 
@@ -164,7 +167,7 @@ defmodule Membrane.SubtitleMixer.FLV.Mixer do
          %{subtitles: [%Cue{to: to, text: text} | tail]} = state
        )
        when to < pts do
-    Logger.info(
+    Membrane.Logger.warn(
       "Skipping cue with text: #{inspect(text)}, to: #{inspect(to)}, pts: #{inspect(pts)}: too old"
     )
 
