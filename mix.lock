@@ -23,7 +23,7 @@
   "ratio": {:hex, :ratio, "2.4.2", "c8518f3536d49b1b00d88dd20d49f8b11abb7819638093314a6348139f14f9f9", [:mix], [{:decimal, "~> 1.6 or ~> 2.0", [hex: :decimal, repo: "hexpm", optional: true]}, {:numbers, "~> 5.2.0", [hex: :numbers, repo: "hexpm", optional: false]}], "hexpm", "441ef6f73172a3503de65ccf1769030997b0d533b1039422f1e5e0e0b4cbf89e"},
   "secure_random": {:hex, :secure_random, "0.5.1", "c5532b37c89d175c328f5196a0c2a5680b15ebce3e654da37129a9fe40ebf51b", [:mix], [], "hexpm", "1b9754f15e3940a143baafd19da12293f100044df69ea12db5d72878312ae6ab"},
   "shmex": {:hex, :shmex, "0.5.0", "7dc4fb1a8bd851085a652605d690bdd070628717864b442f53d3447326bcd3e8", [:mix], [{:bunch_native, "~> 0.5.0", [hex: :bunch_native, repo: "hexpm", optional: false]}, {:bundlex, "~> 1.0", [hex: :bundlex, repo: "hexpm", optional: false]}], "hexpm", "b67bb1e22734758397c84458dbb746519e28eac210423c267c7248e59fc97bdc"},
-  "subtitle_mixer": {:git, "https://github.com/kim-company/subtitle_mixer.git", "26430d793b39f0fe8526677b039ad4ce636c180c", []},
+  "subtitle_mixer": {:git, "https://github.com/kim-company/subtitle_mixer.git", "3cfe1c4b10b80a5d3b0d1d9143205c5371e2c88a", []},
   "telemetry": {:hex, :telemetry, "1.2.1", "68fdfe8d8f05a8428483a97d7aab2f268aaff24b49e0f599faa091f1d4e7f61c", [:rebar3], [], "hexpm", "dad9ce9d8effc621708f99eac538ef1cbe05d6a874dd741de2e689c47feafed5"},
   "unifex": {:hex, :unifex, "1.1.0", "26b1bcb6c3b3454e1ea15f85b2e570aaa5b5c609566aa9f5c2e0a8b213379d6b", [:mix], [{:bunch, "~> 1.0", [hex: :bunch, repo: "hexpm", optional: false]}, {:bundlex, "~> 1.0", [hex: :bundlex, repo: "hexpm", optional: false]}, {:shmex, "~> 0.5.0", [hex: :shmex, repo: "hexpm", optional: false]}], "hexpm", "d8f47e9e3240301f5b20eec5792d1d4341e1a3a268d94f7204703b48da4aaa06"},
 }
