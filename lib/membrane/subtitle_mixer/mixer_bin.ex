@@ -23,7 +23,6 @@ defmodule Membrane.SubtitleMixer.MixerBin do
     spec = [
       bin_input(:video)
       |> child(:in_parser, %Membrane.H264.Parser{})
-      |> child(:payloader, Membrane.MP4.Payloader.H264)
       |> via_in(Pad.ref(:video, 0))
       |> child(:flv_muxer, Membrane.FLV.Muxer),
       bin_input(:subtitle)
