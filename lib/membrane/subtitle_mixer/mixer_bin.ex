@@ -4,8 +4,7 @@ defmodule Membrane.SubtitleMixer.MixerBin do
   def_input_pad(:video,
     availability: :always,
     demand_unit: :buffers,
-    accepted_format:
-      %format{} when format in [Membrane.RemoteStream, Membrane.H264, H264.RemoteStream]
+    accepted_format: %format{} when format in [Membrane.RemoteStream, Membrane.H264]
   )
 
   def_input_pad(:subtitle,
@@ -16,18 +15,14 @@ defmodule Membrane.SubtitleMixer.MixerBin do
 
   def_output_pad(:output,
     demand_mode: :auto,
-    accepted_format: Membrane.H264.RemoteStream
+    accepted_format: Membrane.RemoteStream
   )
 
   @impl true
   def handle_init(_ctx, _opts) do
     spec = [
       bin_input(:video)
-      |> child(:in_parser, %Membrane.H264.FFmpeg.Parser{
-        framerate: nil,
-        attach_nalus?: true,
-        skip_until_keyframe?: true
-      })
+      |> child(:in_parser, %Membrane.H264.Parser{})
       |> child(:payloader, Membrane.MP4.Payloader.H264)
       |> via_in(Pad.ref(:video, 0))
       |> child(:flv_muxer, Membrane.FLV.Muxer),

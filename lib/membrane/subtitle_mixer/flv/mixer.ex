@@ -167,7 +167,7 @@ defmodule Membrane.SubtitleMixer.FLV.Mixer do
          %{subtitles: [%Cue{to: to, text: text} | tail]} = state
        )
        when to < pts do
-    Membrane.Logger.warn(
+    Membrane.Logger.warning(
       "Skipping cue with text: #{inspect(text)}, to: #{inspect(to)}, pts: #{inspect(pts)}: too old"
     )
 
