@@ -15,14 +15,16 @@ defmodule Membrane.SubtitleMixer.MixerBin do
 
   def_output_pad(:output,
     demand_mode: :auto,
-    accepted_format: Membrane.RemoteStream
+    accepted_format: %format{} when format in [Membrane.RemoteStream, Membrane.H264]
   )
 
   @impl true
   def handle_init(_ctx, _opts) do
     spec = [
       bin_input(:video)
-      |> child(:in_parser, %Membrane.H264.Parser{})
+      |> child(:in_parser, %Membrane.H264.Parser{
+        output_stream_structure: :avc1
+      })
       |> via_in(Pad.ref(:video, 0))
       |> child(:flv_muxer, Membrane.FLV.Muxer),
       bin_input(:subtitle)
